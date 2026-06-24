@@ -1,4 +1,7 @@
-//Nombre de cada estudiante: Bascal Francisco Emanuel; Buss Agustin; Fanjul Luca
+//Nombre de cada estudiante:
+// Bascal Francisco Emanuel; 
+// Buss Agustin; 
+// Fanjul Luca
 
 void setup() {
   // put your setup code here, to run once:
