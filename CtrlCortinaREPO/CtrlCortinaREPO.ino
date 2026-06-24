@@ -5,9 +5,11 @@
 // Exequiel Bustos
 // Elias Schiel
 //Facundo Neveu
+//Solange Gerbuez
 //Fuentes Facundo
 // Manuel Ponce
 
+// Elizondo Julian
 void setup() {
   // put your setup code here, to run once:
 
