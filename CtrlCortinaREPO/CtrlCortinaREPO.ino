@@ -5,6 +5,7 @@
 // Exequiel Bustos
 // Elias Schiel
 //Facundo Neveu
+//Solange Gerbuez
 //Fuentes Facundo
 // Manuel Ponce
 void setup() {
