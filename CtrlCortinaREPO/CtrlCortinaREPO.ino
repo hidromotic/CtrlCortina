@@ -1,7 +1,7 @@
 //Nombre de cada estudiante:
 // Ing. Santiago Giles 1 2 3 4
-// Bascal Francisco Emanuel; 
-// Buss Agustin; 
+// Bascal Francisco Emanuel;
+// Buss Agustin;
 // Fanjul Luca
 // Exequiel Bustos
 // Elias Schiel
@@ -32,7 +32,7 @@ TransmisionSerie(void) --> BUSTOS, Exequiel Yoel
 //Serial
 #define CFG_SERIAL Serial.begin(9600)
 #define HAY_DATO (Serial.available() > 0)
-#define IMPRIMIR_SERIAL(X) Serial.println(X) 
+#define IMPRIMIR_SERIAL(X) Serial.println(X)
 #define LEER_DATO 	Serial.read()
 
 //PULSADOR_ABRE
@@ -45,7 +45,7 @@ TransmisionSerie(void) --> BUSTOS, Exequiel Yoel
 #define CFG_PULSADOR_CIERRA       pinMode(PIN_PULSADOR_CIERRA,INPUT)
 #define PULSADOR_CIERRA_ACTIVADO  digitalRead(PIN_PULSADOR_CIERRA)
 
-//FC_CORTINA_CERRADA 
+//FC_CORTINA_CERRADA
 #define PIN_FC_CORTINA_CERRADA    17
 #define CFG_FC_CORTINA_CERRADA    pinMode(PIN_FC_CORTINA_CERRADA, INPUT)
 #define ESTA_CERRADA              digitalRead(PIN_FC_CORTINA_CERRADA)
@@ -56,13 +56,13 @@ TransmisionSerie(void) --> BUSTOS, Exequiel Yoel
 #define ESTA_ABIERTA              digitalRead(PIN_FC_CORTINA_ABIERTA)
 
 
-//SALIDA 
+//SALIDA
 //LED_TEST
 #define PIN_LED_TEST              13
 #define CFG_LED_TEST              pinMode(PIN_LED_TEST, OUTPUT)
 #define PRENDER_LED_TEST          digitalWrite(PIN_LED_TEST, HIGH)
 #define APAGAR_LED_TEST           digitalWrite(PIN_LED_TEST, LOW)
-#define AJUSTAR_LED_TEST(x)       digitalWrite(PIN_LED_TEST, x) 
+#define AJUSTAR_LED_TEST(x)       digitalWrite(PIN_LED_TEST, x)
 
 //MOTOR_MARCHA (Solange)
 #define PIN_MOTOR_MARCHA          14
@@ -91,205 +91,251 @@ unsigned char motor = MOTOR_APAGADO;
 #define CORTINA_DETENIDA 7
 
 unsigned char estado_cortina = CORTINA_DETENIDA;
-unsigned long tiempo_inicio = 0; 
+unsigned long tiempo_inicio = 0;
 unsigned long tiempo_apertura_total = 0;
-unsigned long tiempo_cierre_total = 0; 
+unsigned long tiempo_cierre_total = 0;
 
 bool se_presiono_pulsador_abrir=0, se_presiono_pulsador_cerrar=0;
 //—---------------------------------
 
 
-void setup() {
-  CFG_SERIAL;
-  CFG_PULSADOR_ABRE;
-  CFG_PULSADOR_CIERRA;
-  
-  CFG_FC_CORTINA_CERRADA;
-  CFG_FC_CORTINA_ABIERTA;
-  CFG_MOTOR_MARCHA;
-  CFG_MOTOR_ABRE; 
-  CFG_LED_TEST;
- 
-  if (ESTA_ABIERTA) estado_cortina = CORTINA_ABIERTA;
-  if (ESTA_CERRADA) estado_cortina = CORTINA_CERRADA;
-  else {estado_cortina = CORTINA_DETENIDA;}
-  
-  DETENER_MOTOR;
-}
+void setup()
+    {
+    CFG_SERIAL;
+    CFG_PULSADOR_ABRE;
+    CFG_PULSADOR_CIERRA;
 
-void loop() {
-  // put your main code here, to run repeatedly:
-  LedTest();
-  CtrlPulsador();
-  CtrlCortina();
-  CtrlMotor();
-  RecepcionSerie();
-  TransmisionSerie();
-  //TestFC(); 
-  //TestPULSADORES();
-}
+    CFG_FC_CORTINA_CERRADA;
+    CFG_FC_CORTINA_ABIERTA;
+    CFG_MOTOR_MARCHA;
+    CFG_MOTOR_ABRE;
+    CFG_LED_TEST;
+
+    if (ESTA_ABIERTA) estado_cortina = CORTINA_ABIERTA;
+    if (ESTA_CERRADA) estado_cortina = CORTINA_CERRADA;
+    else
+        {
+        estado_cortina = CORTINA_DETENIDA;
+        }
+
+    DETENER_MOTOR;
+    }
+
+void loop()
+    {
+    // put your main code here, to run repeatedly:
+    LedTest();
+    CtrlPulsador();
+    CtrlCortina();
+    CtrlMotor();
+    RecepcionSerie();
+    TransmisionSerie();
+    //TestFC();
+    //TestPULSADORES();
+    }
 
 void LedTest ()
-  {
-  static unsigned long millis_ant = 0;
-  static bool blink = 0;
-  static unsigned int tiempo_destello=1000;
+    {
+    static unsigned long millis_ant = 0;
+    static bool blink = 0;
+    static unsigned int tiempo_destello=1000;
 
-  if (millis() - millis_ant < tiempo_destello) return;
-  millis_ant = millis();
-   
-  tiempo_destello = (motor == MOTOR_ABRE || motor == MOTOR_CIERRA) ? 100 : 1000;
-    
-  blink = !blink;
-  AJUSTAR_LED_TEST(blink);
+    if (millis() - millis_ant < tiempo_destello) return;
+    millis_ant = millis();
 
-  }
+    tiempo_destello = (motor == MOTOR_ABRE || motor == MOTOR_CIERRA) ? 100 : 1000;
+
+    blink = !blink;
+    AJUSTAR_LED_TEST(blink);
+
+    }
 
 void CtrlCortina()
-  {
-  	int tiempo_maximo = 10000;
-switch(estado_cortina)    
-      {
-      case CORTINA_ABRIR:
-        if(ESTA_ABIERTA) 
-          {
-          estado_cortina=CORTINA_ABIERTA;
-          break;
-          }          
-        motor = MOTOR_ABRE;
-        estado_cortina++;
-        tiempo_inicio = millis(); 
-        break; 
-      case CORTINA_ABRIENDO:
-if(millis()-tiempo_inicio > tiempo_maximo) {estado_cortina = CORTINA_DETENER; break; }        
-   if(se_presiono_pulsador_abrir || se_presiono_pulsador_cerrar)    {estado_cortina=CORTINA_DETENER;break;}
-        if(!ESTA_ABIERTA) break;
-        motor = MOTOR_APAGADO;
-        estado_cortina++;
-	tiempo_apertura_total = (millis() - tiempo_inicio)/1000;
-      	
+    {
+    int tiempo_maximo = 10000;
+    switch(estado_cortina)
+        {
+        case CORTINA_ABRIR:
+            if(ESTA_ABIERTA)
+                {
+                estado_cortina=CORTINA_ABIERTA;
+                break;
+                }
+            motor = MOTOR_ABRE;
+            estado_cortina++;
+            tiempo_inicio = millis();
+            break;
+        case CORTINA_ABRIENDO:
+            if(millis()-tiempo_inicio > tiempo_maximo)
+                {
+                estado_cortina = CORTINA_DETENER;
+                break;
+                }
+            if(se_presiono_pulsador_abrir || se_presiono_pulsador_cerrar)
+                {
+                estado_cortina=CORTINA_DETENER;
+                break;
+                }
+            if(!ESTA_ABIERTA) break;
+            motor = MOTOR_APAGADO;
+            estado_cortina++;
+            tiempo_apertura_total = (millis() - tiempo_inicio)/1000;
 
-        break; 
-      case CORTINA_ABIERTA: 
-        if(se_presiono_pulsador_cerrar) estado_cortina=CORTINA_CERRAR;
-        break;
-      case CORTINA_CERRAR:
-        if(ESTA_CERRADA)
-          {
-          estado_cortina=CORTINA_CERRADA;
-          break;
-          }
-        motor = MOTOR_CIERRA;
-        estado_cortina++;
-	tiempo_inicio = millis();
 
-        break; 
-      case CORTINA_CERRANDO:
-if(millis()-tiempo_inicio > tiempo_maximo) {estado_cortina = CORTINA_DETENER; break; }        
-if(se_presiono_pulsador_abrir || se_presiono_pulsador_cerrar)   
- 	{estado_cortina=CORTINA_DETENER; break;}
-        if(!ESTA_CERRADA) break;
-        motor = MOTOR_APAGADO;
-        estado_cortina++;
-tiempo_cierre_total = (millis() - tiempo_inicio)/1000;
-      	
+            break;
+        case CORTINA_ABIERTA:
+            if(se_presiono_pulsador_cerrar) estado_cortina=CORTINA_CERRAR;
+            break;
+        case CORTINA_CERRAR:
+            if(ESTA_CERRADA)
+                {
+                estado_cortina=CORTINA_CERRADA;
+                break;
+                }
+            motor = MOTOR_CIERRA;
+            estado_cortina++;
+            tiempo_inicio = millis();
 
-        break; 
-      case CORTINA_CERRADA: 
-        if(se_presiono_pulsador_abrir) estado_cortina=CORTINA_ABRIR;
-        break; 
-      case CORTINA_DETENER:
-        motor = MOTOR_APAGADO;
-        estado_cortina++;
-        break; 
-      case CORTINA_DETENIDA:  
-        if(se_presiono_pulsador_abrir)   {estado_cortina=CORTINA_ABRIR; break;}
-        if(se_presiono_pulsador_cerrar)  {estado_cortina=CORTINA_CERRAR; break;}
-        break;
-      }
-  }
+            break;
+        case CORTINA_CERRANDO:
+            if(millis()-tiempo_inicio > tiempo_maximo)
+                {
+                estado_cortina = CORTINA_DETENER;
+                break;
+                }
+            if(se_presiono_pulsador_abrir || se_presiono_pulsador_cerrar)
+                {
+                estado_cortina=CORTINA_DETENER;
+                break;
+                }
+            if(!ESTA_CERRADA) break;
+            motor = MOTOR_APAGADO;
+            estado_cortina++;
+            tiempo_cierre_total = (millis() - tiempo_inicio)/1000;
 
-{
-void TestFC()
-if(ESTA_CERRADA) PRENDER_LED_TEST;
-if(ESTA_ABIERTA) APAGAR_LED_TEST;
-}
+
+            break;
+        case CORTINA_CERRADA:
+            if(se_presiono_pulsador_abrir) estado_cortina=CORTINA_ABRIR;
+            break;
+        case CORTINA_DETENER:
+            motor = MOTOR_APAGADO;
+            estado_cortina++;
+            break;
+        case CORTINA_DETENIDA:
+            if(se_presiono_pulsador_abrir)
+                {
+                estado_cortina=CORTINA_ABRIR;
+                break;
+                }
+            if(se_presiono_pulsador_cerrar)
+                {
+                estado_cortina=CORTINA_CERRAR;
+                break;
+                }
+            break;
+        }
+    }
+
+    {
+    void TestFC()
+    if(ESTA_CERRADA) PRENDER_LED_TEST;
+    if(ESTA_ABIERTA) APAGAR_LED_TEST;
+    }
 
 void CtrlPulsador(void)
-}
-{
+    }
+    {
 //Variables de control de presión de pulsador
-static bool pulsador_abre_activado_ant = false;
-static bool pulsador_cierra_activado_ant = false;
-if(PULSADOR_ABRE_ACTIVADO != pulsador_abre_activado_ant)
-{
-pulsador_abre_activado_ant = PULSADOR_ABRE_ACTIVADO;
-if(PULSADOR_ABRE_ACTIVADO) //Se tocó el pulsador
-{
+    static bool pulsador_abre_activado_ant = false;
+    static bool pulsador_cierra_activado_ant = false;
+    if(PULSADOR_ABRE_ACTIVADO != pulsador_abre_activado_ant)
+        {
+        pulsador_abre_activado_ant = PULSADOR_ABRE_ACTIVADO;
+        if(PULSADOR_ABRE_ACTIVADO) //Se tocó el pulsador
+            {
 //Si ESTA CERRADA → ABRIR
 //Considerar situaciones en que pueda estar en marcha o no (ABRIENDO / CERRANDO)
 //Considerar el caso en que la cortina ESTA ABIERTA
-if (ESTA_ABIERTA) return; //early return
-if (ESTA_CERRADA || estado_cortina == CORTINA_DETENIDA)
-estado_cortina = CORTINA_ABRIR;
-else
-estado_cortina = CORTINA_DETENER;
+            if (ESTA_ABIERTA) return; //early return
+            if (ESTA_CERRADA || estado_cortina == CORTINA_DETENIDA)
+                estado_cortina = CORTINA_ABRIR;
+            else
+                estado_cortina = CORTINA_DETENER;
 //estado_cortina = (ESTA_CERRADA || estado_cortina == CORTINA_DETENIDA) ? CORTINA_ABRIR : CORTINA_DETENER;
-}
-}
+            }
+        }
 
-void RecepcionSerie(void)
-{
-	char comando;
-	if(!HAY_DATO)return;
-comando = LEER_DATO;
+    void RecepcionSerie(void)
+        {
+        char comando;
+        if(!HAY_DATO)return;
+        comando = LEER_DATO;
 
 
-	switch (comando)
-{
-	case ‘a’: 
-case ‘A’:
-		estado_cortina=CORTINA_ABRIR;
-		break;
-case ‘c’: 
-case ‘C’:
-		estado_cortina=CORTINA_CERRAR;
-		break;
-case ‘d’: 
-case ‘D’:		
-		estado_cortina=CORTINA_DETENER;
-break;
-}
+        switch (comando)
+            {
+            case ‘a’:
+            case ‘A’:
+                estado_cortina=CORTINA_ABRIR;
+                break;
+            case ‘c’:
+            case ‘C’:
+                estado_cortina=CORTINA_CERRAR;
+                break;
+            case ‘d’:
+            case ‘D’:
+                estado_cortina=CORTINA_DETENER;
+                break;
+            }
 
-}
+        }
 
-void TransmisionSerie(void)
-{
+    void TransmisionSerie(void)
+        {
 //Para que se escriba el cambio de estado una vez por cambio.
-static char estado_cortina_ant = CORTINA_DETENIDA;
-	if(estado_cortina == estado_cortina_ant) return; //early return
-	estado_cortina_ant = estado_cortina;
+        static char estado_cortina_ant = CORTINA_DETENIDA;
+        if(estado_cortina == estado_cortina_ant) return; //early return
+        estado_cortina_ant = estado_cortina;
 
-	switch(estado_cortina)
-{
-	case CORTINA_ABRIENDO:  IMPRIMIR_SERIAL("Abriendo");  break;
-	case CORTINA_ABIERTA:   IMPRIMIR_SERIAL("Abierta");   break;
-	case CORTINA_CERRANDO:  IMPRIMIR_SERIAL("Cerrando");  break;
-	case CORTINA_CERRADA:   IMPRIMIR_SERIAL("Cerrada");   break;
-	case CORTINA_DETENIDA:  IMPRIMIR_SERIAL("Detenida");	 break;
-}
-}
-void CtrlMotor(void)
-  {
-  static unsigned char motor_ant = MOTOR_APAGADO;
-    
-  if(motor == motor_ant)  return; //early return por si todavía no cambió el estado del motor
-  motor_ant = motor; //asignación de la variable de control de estado de motor
-  
-  switch(motor) //FSM que maneja el estado del motor
-   {
-    case MOTOR_APAGADO:   DETENER_MOTOR;    break;
-    case MOTOR_ABRE:      MOTOR_ABRIR;      ENCENDER_MOTOR;   break;
-    case MOTOR_CIERRA:    MOTOR_CERRAR;     ENCENDER_MOTOR;   break;
-    }
-  }
+        switch(estado_cortina)
+            {
+            case CORTINA_ABRIENDO:
+                IMPRIMIR_SERIAL("Abriendo");
+                break;
+            case CORTINA_ABIERTA:
+                IMPRIMIR_SERIAL("Abierta");
+                break;
+            case CORTINA_CERRANDO:
+                IMPRIMIR_SERIAL("Cerrando");
+                break;
+            case CORTINA_CERRADA:
+                IMPRIMIR_SERIAL("Cerrada");
+                break;
+            case CORTINA_DETENIDA:
+                IMPRIMIR_SERIAL("Detenida");
+                break;
+            }
+        }
+    void CtrlMotor(void)
+        {
+        static unsigned char motor_ant = MOTOR_APAGADO;
+
+        if(motor == motor_ant)  return; //early return por si todavía no cambió el estado del motor
+        motor_ant = motor; //asignación de la variable de control de estado de motor
+
+        switch(motor) //FSM que maneja el estado del motor
+            {
+            case MOTOR_APAGADO:
+                DETENER_MOTOR;
+                break;
+            case MOTOR_ABRE:
+                MOTOR_ABRIR;
+                ENCENDER_MOTOR;
+                break;
+            case MOTOR_CIERRA:
+                MOTOR_CERRAR;
+                ENCENDER_MOTOR;
+                break;
+            }
+        }
