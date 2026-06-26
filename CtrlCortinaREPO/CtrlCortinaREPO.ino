@@ -204,6 +204,27 @@ tiempo_cierre_total = (millis() - tiempo_inicio)/1000;
       }
   }
 
+void RecepcionSerie(void)
+{
+	char comando;
+	if(!HAY_DATO)return;
+comando = LEER_DATO;
 
 
+	switch (comando)
+{
+	case ‘a’: 
+case ‘A’:
+		estado_cortina=CORTINA_ABRIR;
+		break;
+case ‘c’: 
+case ‘C’:
+		estado_cortina=CORTINA_CERRAR;
+		break;
+case ‘d’: 
+case ‘D’:		
+		estado_cortina=CORTINA_DETENER;
+break;
+}
 
+}
