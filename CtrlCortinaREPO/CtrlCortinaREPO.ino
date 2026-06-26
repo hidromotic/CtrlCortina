@@ -254,3 +254,33 @@ void CtrlPulsador(void)
   if(ESTA_CERRADA)  PRENDER_LED_TEST;
   if(ESTA_ABIERTA)  APAGAR_LED_TEST;  
   }
+
+
+void TransmisionSerie(void)
+{
+//Para que se escriba el cambio de estado una vez por cambio.
+static char estado_cortina_ant = CORTINA_DETENIDA;
+	if(estado_cortina == estado_cortina_ant) return; //early return
+	estado_cortina_ant = estado_cortina;
+
+	switch(estado_cortina)
+{
+	case CORTINA_ABRIENDO:  IMPRIMIR_SERIAL("Abriendo");  break;
+	case CORTINA_ABIERTA:   IMPRIMIR_SERIAL("Abierta");   break;
+	case CORTINA_CERRANDO:  IMPRIMIR_SERIAL("Cerrando");  break;
+	case CORTINA_CERRADA:   IMPRIMIR_SERIAL("Cerrada");   break;
+	case CORTINA_DETENIDA:  IMPRIMIR_SERIAL("Detenida");	 break;
+}
+}
+
+
+LedTest();
+
+  CtrlPulsador();
+  CtrlCortina();
+  CtrlMotor();
+  RecepcionSerie();
+
+  TransmisionSerie();
+  //TestFC(); 
+  //TestPULSADORES();
