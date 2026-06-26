@@ -119,7 +119,14 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-
+  LedTest();
+  CtrlPulsador();
+  CtrlCortina();
+  CtrlMotor();
+  RecepcionSerie();
+  TransmisionSerie();
+  //TestFC(); 
+  //TestPULSADORES();
 }
 
 void LedTest ()
@@ -245,15 +252,3 @@ static char estado_cortina_ant = CORTINA_DETENIDA;
 	case CORTINA_DETENIDA:  IMPRIMIR_SERIAL("Detenida");	 break;
 }
 }
-
-
-LedTest();
-
-  CtrlPulsador();
-  CtrlCortina();
-  CtrlMotor();
-  RecepcionSerie();
-
-  TransmisionSerie();
-  //TestFC(); 
-  //TestPULSADORES();
