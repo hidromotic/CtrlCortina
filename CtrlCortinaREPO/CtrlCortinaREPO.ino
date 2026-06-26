@@ -138,6 +138,70 @@ void LedTest ()
 
   }
 
+void CtrlCortina()
+  {
+  	int tiempo_maximo = 10000;
+switch(estado_cortina)    
+      {
+      case CORTINA_ABRIR:
+        if(ESTA_ABIERTA) 
+          {
+          estado_cortina=CORTINA_ABIERTA;
+          break;
+          }          
+        motor = MOTOR_ABRE;
+        estado_cortina++;
+        tiempo_inicio = millis(); 
+        break; 
+      case CORTINA_ABRIENDO:
+if(millis()-tiempo_inicio > tiempo_maximo) {estado_cortina = CORTINA_DETENER; break; }        
+   if(se_presiono_pulsador_abrir || se_presiono_pulsador_cerrar)    {estado_cortina=CORTINA_DETENER;break;}
+        if(!ESTA_ABIERTA) break;
+        motor = MOTOR_APAGADO;
+        estado_cortina++;
+	tiempo_apertura_total = (millis() - tiempo_inicio)/1000;
+      	
+
+        break; 
+      case CORTINA_ABIERTA: 
+        if(se_presiono_pulsador_cerrar) estado_cortina=CORTINA_CERRAR;
+        break;
+      case CORTINA_CERRAR:
+        if(ESTA_CERRADA)
+          {
+          estado_cortina=CORTINA_CERRADA;
+          break;
+          }
+        motor = MOTOR_CIERRA;
+        estado_cortina++;
+	tiempo_inicio = millis();
+
+        break; 
+      case CORTINA_CERRANDO:
+if(millis()-tiempo_inicio > tiempo_maximo) {estado_cortina = CORTINA_DETENER; break; }        
+if(se_presiono_pulsador_abrir || se_presiono_pulsador_cerrar)   
+ 	{estado_cortina=CORTINA_DETENER; break;}
+        if(!ESTA_CERRADA) break;
+        motor = MOTOR_APAGADO;
+        estado_cortina++;
+tiempo_cierre_total = (millis() - tiempo_inicio)/1000;
+      	
+
+        break; 
+      case CORTINA_CERRADA: 
+        if(se_presiono_pulsador_abrir) estado_cortina=CORTINA_ABRIR;
+        break; 
+      case CORTINA_DETENER:
+        motor = MOTOR_APAGADO;
+        estado_cortina++;
+        break; 
+      case CORTINA_DETENIDA:  
+        if(se_presiono_pulsador_abrir)   {estado_cortina=CORTINA_ABRIR; break;}
+        if(se_presiono_pulsador_cerrar)  {estado_cortina=CORTINA_CERRAR; break;}
+        break;
+      }
+  }
+
 
 
 void RecepcionSerie(void)
