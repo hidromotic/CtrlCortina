@@ -26,6 +26,79 @@ CtrlPulsador(void) --> BUSS, Agustin
 RecepcionSerie(void) --> BASCAL, Francisco Emanuel
 TransmisionSerie(void) --> BUSTOS, Exequiel Yoel
 */
+
+
+//ENTRADAS
+//Serial
+#define CFG_SERIAL Serial.begin(9600)
+#define HAY_DATO (Serial.available() > 0)
+#define IMPRIMIR_SERIAL(X) Serial.println(X) 
+#define LEER_DATO 	Serial.read()
+
+//PULSADOR_ABRE
+#define PIN_PULSADOR_ABRE         19
+#define CFG_PULSADOR_ABRE         pinMode(PIN_PULSADOR_ABRE,INPUT)
+#define PULSADOR_ABRE_ACTIVADO    digitalRead(PIN_PULSADOR_ABRE)
+
+//control PULSADOR_CIERRA
+#define PIN_PULSADOR_CIERRA       18
+#define CFG_PULSADOR_CIERRA       pinMode(PIN_PULSADOR_CIERRA,INPUT)
+#define PULSADOR_CIERRA_ACTIVADO  digitalRead(PIN_PULSADOR_CIERRA)
+
+//FC_CORTINA_CERRADA 
+#define PIN_FC_CORTINA_CERRADA    17
+#define CFG_FC_CORTINA_CERRADA    pinMode(PIN_FC_CORTINA_CERRADA, INPUT)
+#define ESTA_CERRADA              digitalRead(PIN_FC_CORTINA_CERRADA)
+
+//FC_CORTINA_ABIERTA (Agustin)
+#define PIN_FC_CORTINA_ABIERTA    16
+#define CFG_FC_CORTINA_ABIERTA    pinMode (PIN_FC_CORTINA_ABIERTA, INPUT)
+#define ESTA_ABIERTA              digitalRead(PIN_FC_CORTINA_ABIERTA)
+
+
+//SALIDA 
+//LED_TEST
+#define PIN_LED_TEST              13
+#define CFG_LED_TEST              pinMode(PIN_LED_TEST, OUTPUT)
+#define PRENDER_LED_TEST          digitalWrite(PIN_LED_TEST, HIGH)
+#define APAGAR_LED_TEST           digitalWrite(PIN_LED_TEST, LOW)
+#define AJUSTAR_LED_TEST(x)       digitalWrite(PIN_LED_TEST, x) 
+
+//MOTOR_MARCHA (Solange)
+#define PIN_MOTOR_MARCHA          14
+#define CFG_MOTOR_MARCHA          pinMode(PIN_MOTOR_MARCHA,OUTPUT)
+#define ENCENDER_MOTOR            digitalWrite(PIN_MOTOR_MARCHA,HIGH)
+#define DETENER_MOTOR             digitalWrite(PIN_MOTOR_MARCHA,LOW)
+
+//MOTOR_ABRE
+#define PIN_MOTOR_ABRE            15
+#define CFG_MOTOR_ABRE            pinMode(PIN_MOTOR_ABRE,OUTPUT)
+#define MOTOR_ABRIR               digitalWrite(PIN_MOTOR_ABRE,HIGH)
+#define MOTOR_CERRAR              digitalWrite(PIN_MOTOR_ABRE,LOW)
+
+#define MOTOR_APAGADO 0
+#define MOTOR_ABRE 1
+#define MOTOR_CIERRA 2
+unsigned char motor = MOTOR_APAGADO;
+
+#define CORTINA_ABRIR 0
+#define CORTINA_ABRIENDO 1
+#define CORTINA_ABIERTA 2
+#define CORTINA_CERRAR 3
+#define CORTINA_CERRANDO 4
+#define CORTINA_CERRADA 5
+#define CORTINA_DETENER 6
+#define CORTINA_DETENIDA 7
+
+unsigned char estado_cortina = CORTINA_DETENIDA;
+unsigned long tiempo_inicio = 0; 
+unsigned long tiempo_apertura_total = 0;
+unsigned long tiempo_cierre_total = 0; 
+
+bool se_presiono_pulsador_abrir=0, se_presiono_pulsador_cerrar=0;
+//—---------------------------------
+
+
 void setup() {
   CFG_SERIAL;
   CFG_PULSADOR_ABRE;
@@ -130,5 +203,7 @@ tiempo_cierre_total = (millis() - tiempo_inicio)/1000;
         break;
       }
   }
+
+
 
 
