@@ -35,3 +35,20 @@ void loop() {
   // put your main code here, to run repeatedly:
 
 }
+
+void LedTest ()
+  {
+  static unsigned long millis_ant = 0;
+  static bool blink = 0;
+  static unsigned int tiempo_destello=1000;
+
+  if (millis() - millis_ant < tiempo_destello) return;
+  millis_ant = millis();
+   
+  tiempo_destello = (motor == MOTOR_ABRE || motor == MOTOR_CIERRA) ? 100 : 1000;
+    
+  blink = !blink;
+  AJUSTAR_LED_TEST(blink);
+
+  }
+
