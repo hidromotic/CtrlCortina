@@ -27,8 +27,21 @@ RecepcionSerie(void) --> BASCAL, Francisco Emanuel
 TransmisionSerie(void) --> BUSTOS, Exequiel Yoel
 */
 void setup() {
-  // put your setup code here, to run once:
-
+  CFG_SERIAL;
+  CFG_PULSADOR_ABRE;
+  CFG_PULSADOR_CIERRA;
+  
+  CFG_FC_CORTINA_CERRADA;
+  CFG_FC_CORTINA_ABIERTA;
+  CFG_MOTOR_MARCHA;
+  CFG_MOTOR_ABRE; 
+  CFG_LED_TEST;
+ 
+  if (ESTA_ABIERTA) estado_cortina = CORTINA_ABIERTA;
+  if (ESTA_CERRADA) estado_cortina = CORTINA_CERRADA;
+  else {estado_cortina = CORTINA_DETENIDA;}
+  
+  DETENER_MOTOR;
 }
 
 void loop() {
