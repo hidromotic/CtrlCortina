@@ -279,3 +279,17 @@ static char estado_cortina_ant = CORTINA_DETENIDA;
 	case CORTINA_DETENIDA:  IMPRIMIR_SERIAL("Detenida");	 break;
 }
 }
+void CtrlMotor(void)
+  {
+  static unsigned char motor_ant = MOTOR_APAGADO;
+    
+  if(motor == motor_ant)  return; //early return por si todavía no cambió el estado del motor
+  motor_ant = motor; //asignación de la variable de control de estado de motor
+  
+  switch(motor) //FSM que maneja el estado del motor
+   {
+    case MOTOR_APAGADO:   DETENER_MOTOR;    break;
+    case MOTOR_ABRE:      MOTOR_ABRIR;      ENCENDER_MOTOR;   break;
+    case MOTOR_CIERRA:    MOTOR_CERRAR;     ENCENDER_MOTOR;   break;
+    }
+  }
