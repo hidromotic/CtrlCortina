@@ -228,3 +228,29 @@ break;
 }
 
 }
+
+void CtrlPulsador(void)
+  {
+  static bool pulsador_abre_activado_ant = false;
+  static bool pulsador_cierra_activado_ant = false;
+
+  //La variable se está reescribiendo todo el tiempo... eso no está muy bien
+  //Queremos que se actualice sólo si hay cambios
+
+  //Resetea el aviso
+  if(se_presiono_pulsador_abrir)  se_presiono_pulsador_abrir=0;
+  if(se_presiono_pulsador_cerrar) se_presiono_pulsador_cerrar=0;
+
+  //Avisa cuando hay un evento (se presionó un pulsador)
+    if(PULSADOR_ABRE_ACTIVADO!=pulsador_abre_activado_ant)
+        se_presiono_pulsador_abrir= pulsador_abre_activado_ant= PULSADOR_ABRE_ACTIVADO;
+
+    if(PULSADOR_CIERRA_ACTIVADO!=pulsador_cierra_activado_ant)
+        se_presiono_pulsador_cerrar= pulsador_cierra_activado_ant= PULSADOR_CIERRA_ACTIVADO;
+  }
+
+  void TestFC()
+  {
+  if(ESTA_CERRADA)  PRENDER_LED_TEST;
+  if(ESTA_ABIERTA)  APAGAR_LED_TEST;  
+  }
