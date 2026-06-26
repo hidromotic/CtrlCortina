@@ -209,7 +209,34 @@ tiempo_cierre_total = (millis() - tiempo_inicio)/1000;
       }
   }
 
+{
+void TestFC()
+if(ESTA_CERRADA) PRENDER_LED_TEST;
+if(ESTA_ABIERTA) APAGAR_LED_TEST;
+}
 
+void CtrlPulsador(void)
+}
+{
+//Variables de control de presión de pulsador
+static bool pulsador_abre_activado_ant = false;
+static bool pulsador_cierra_activado_ant = false;
+if(PULSADOR_ABRE_ACTIVADO != pulsador_abre_activado_ant)
+{
+pulsador_abre_activado_ant = PULSADOR_ABRE_ACTIVADO;
+if(PULSADOR_ABRE_ACTIVADO) //Se tocó el pulsador
+{
+//Si ESTA CERRADA → ABRIR
+//Considerar situaciones en que pueda estar en marcha o no (ABRIENDO / CERRANDO)
+//Considerar el caso en que la cortina ESTA ABIERTA
+if (ESTA_ABIERTA) return; //early return
+if (ESTA_CERRADA || estado_cortina == CORTINA_DETENIDA)
+estado_cortina = CORTINA_ABRIR;
+else
+estado_cortina = CORTINA_DETENER;
+//estado_cortina = (ESTA_CERRADA || estado_cortina == CORTINA_DETENIDA) ? CORTINA_ABRIR : CORTINA_DETENER;
+}
+}
 
 void RecepcionSerie(void)
 {
