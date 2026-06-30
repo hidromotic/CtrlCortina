@@ -339,3 +339,10 @@ void CtrlPulsador(void)
                 break;
             }
         }
+
+//Testeo de PULSADOR_ABRE y PULSADOR_CIERRA  (Manuel Ponce y Facundo Kern)
+void TestPULSADORES()
+{
+if(PULSADOR_ABRE_ACTIVADO)     PRENDER_LED_TEST;
+if(PULSADOR_CIERRA_ACTIVADO)  APAGAR_LED_TEST;
+}
