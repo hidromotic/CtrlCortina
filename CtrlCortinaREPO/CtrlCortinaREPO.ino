@@ -121,18 +121,6 @@ void setup()
     DETENER_MOTOR;
     }
 
-void loop()
-    {
-    // put your main code here, to run repeatedly:
-    LedTest();
-    CtrlPulsador();
-    CtrlCortina();
-    CtrlMotor();
-    RecepcionSerie();
-    TransmisionSerie();
-    //TestFC();
-    //TestPULSADORES();
-    }
 
 void LedTest ()
     {
@@ -237,14 +225,14 @@ void CtrlCortina()
         }
     }
 
+
+void TestFC()
     {
-    void TestFC()
     if(ESTA_CERRADA) PRENDER_LED_TEST;
     if(ESTA_ABIERTA) APAGAR_LED_TEST;
     }
 
 void CtrlPulsador(void)
-    }
     {
 //Variables de control de presión de pulsador
     static bool pulsador_abre_activado_ant = false;
@@ -265,8 +253,9 @@ void CtrlPulsador(void)
 //estado_cortina = (ESTA_CERRADA || estado_cortina == CORTINA_DETENIDA) ? CORTINA_ABRIR : CORTINA_DETENER;
             }
         }
+    }
 
-    void RecepcionSerie(void)
+void RecepcionSerie(void)
         {
         char comando;
         if(!HAY_DATO)return;
@@ -275,23 +264,23 @@ void CtrlPulsador(void)
 
         switch (comando)
             {
-            case ‘a’:
-            case ‘A’:
+            case 'a':
+            case 'A':
                 estado_cortina=CORTINA_ABRIR;
                 break;
-            case ‘c’:
-            case ‘C’:
+            case 'c':
+            case 'C':
                 estado_cortina=CORTINA_CERRAR;
                 break;
-            case ‘d’:
-            case ‘D’:
+            case 'd':
+            case 'D':
                 estado_cortina=CORTINA_DETENER;
                 break;
             }
 
         }
 
-    void TransmisionSerie(void)
+void TransmisionSerie(void)
         {
 //Para que se escriba el cambio de estado una vez por cambio.
         static char estado_cortina_ant = CORTINA_DETENIDA;
@@ -317,6 +306,7 @@ void CtrlPulsador(void)
                 break;
             }
         }
+
     void CtrlMotor(void)
         {
         static unsigned char motor_ant = MOTOR_APAGADO;
@@ -339,3 +329,16 @@ void CtrlPulsador(void)
                 break;
             }
         }
+
+void loop()
+    {
+    // put your main code here, to run repeatedly:
+    LedTest();
+    CtrlPulsador();
+    CtrlCortina();
+    CtrlMotor();
+    RecepcionSerie();
+    TransmisionSerie();
+    //TestFC();
+    //TestPULSADORES();
+    }
