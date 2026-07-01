@@ -256,79 +256,86 @@ void CtrlPulsador(void)
     }
 
 void RecepcionSerie(void)
+    {
+    char comando;
+    if(!HAY_DATO)return;
+    comando = LEER_DATO;
+
+
+    switch (comando)
         {
-        char comando;
-        if(!HAY_DATO)return;
-        comando = LEER_DATO;
-
-
-        switch (comando)
-            {
-            case 'a':
-            case 'A':
-                estado_cortina=CORTINA_ABRIR;
-                break;
-            case 'c':
-            case 'C':
-                estado_cortina=CORTINA_CERRAR;
-                break;
-            case 'd':
-            case 'D':
-                estado_cortina=CORTINA_DETENER;
-                break;
-            }
-
+        case 'a':
+        case 'A':
+            estado_cortina=CORTINA_ABRIR;
+            break;
+        case 'c':
+        case 'C':
+            estado_cortina=CORTINA_CERRAR;
+            break;
+        case 'd':
+        case 'D':
+            estado_cortina=CORTINA_DETENER;
+            break;
         }
+
+    }
 
 void TransmisionSerie(void)
-        {
+    {
 //Para que se escriba el cambio de estado una vez por cambio.
-        static char estado_cortina_ant = CORTINA_DETENIDA;
-        if(estado_cortina == estado_cortina_ant) return; //early return
-        estado_cortina_ant = estado_cortina;
+    static char estado_cortina_ant = CORTINA_DETENIDA;
+    if(estado_cortina == estado_cortina_ant) return; //early return
+    estado_cortina_ant = estado_cortina;
 
-        switch(estado_cortina)
-            {
-            case CORTINA_ABRIENDO:
-                IMPRIMIR_SERIAL("Abriendo");
-                break;
-            case CORTINA_ABIERTA:
-                IMPRIMIR_SERIAL("Abierta");
-                break;
-            case CORTINA_CERRANDO:
-                IMPRIMIR_SERIAL("Cerrando");
-                break;
-            case CORTINA_CERRADA:
-                IMPRIMIR_SERIAL("Cerrada");
-                break;
-            case CORTINA_DETENIDA:
-                IMPRIMIR_SERIAL("Detenida");
-                break;
-            }
-        }
-
-    void CtrlMotor(void)
+    switch(estado_cortina)
         {
-        static unsigned char motor_ant = MOTOR_APAGADO;
-
-        if(motor == motor_ant)  return; //early return por si todavía no cambió el estado del motor
-        motor_ant = motor; //asignación de la variable de control de estado de motor
-
-        switch(motor) //FSM que maneja el estado del motor
-            {
-            case MOTOR_APAGADO:
-                DETENER_MOTOR;
-                break;
-            case MOTOR_ABRE:
-                MOTOR_ABRIR;
-                ENCENDER_MOTOR;
-                break;
-            case MOTOR_CIERRA:
-                MOTOR_CERRAR;
-                ENCENDER_MOTOR;
-                break;
-            }
+        case CORTINA_ABRIENDO:
+            IMPRIMIR_SERIAL("Abriendo");
+            break;
+        case CORTINA_ABIERTA:
+            IMPRIMIR_SERIAL("Abierta");
+            break;
+        case CORTINA_CERRANDO:
+            IMPRIMIR_SERIAL("Cerrando");
+            break;
+        case CORTINA_CERRADA:
+            IMPRIMIR_SERIAL("Cerrada");
+            break;
+        case CORTINA_DETENIDA:
+            IMPRIMIR_SERIAL("Detenida");
+            break;
         }
+    }
+
+void CtrlMotor(void)
+    {
+    static unsigned char motor_ant = MOTOR_APAGADO;
+
+    if(motor == motor_ant)  return; //early return por si todavía no cambió el estado del motor
+    motor_ant = motor; //asignación de la variable de control de estado de motor
+
+    switch(motor) //FSM que maneja el estado del motor
+        {
+        case MOTOR_APAGADO:
+            DETENER_MOTOR;
+            break;
+        case MOTOR_ABRE:
+            MOTOR_ABRIR;
+            ENCENDER_MOTOR;
+            break;
+        case MOTOR_CIERRA:
+            MOTOR_CERRAR;
+            ENCENDER_MOTOR;
+            break;
+        }
+
+    }
+
+void TestPULSADORES()
+    {
+    if(PULSADOR_ABRE_ACTIVADO)      PRENDER_LED_TEST;
+    if(PULSADOR_CIERRA_ACTIVADO)    APAGAR_LED_TEST;
+    }
 
 void loop()
     {
@@ -342,9 +349,5 @@ void loop()
     //TestFC();
     //TestPULSADORES();
     }
-//Testeo de PULSADOR_ABRE y PULSADOR_CIERRA  (Manuel Ponce y Facundo Kern)
-void TestPULSADORES()
-{
-if(PULSADOR_ABRE_ACTIVADO)     PRENDER_LED_TEST;
-if(PULSADOR_CIERRA_ACTIVADO)  APAGAR_LED_TEST;
-}
+
+
