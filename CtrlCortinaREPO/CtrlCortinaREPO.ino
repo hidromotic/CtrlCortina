@@ -232,7 +232,7 @@ void TestFC()
     if(ESTA_ABIERTA) APAGAR_LED_TEST;
     }
 
-void CtrlPulsador(void)
+void CtrlPulsador(void) // Este no es el último
     {
 //Variables de control de presión de pulsador
     static bool pulsador_abre_activado_ant = false;
